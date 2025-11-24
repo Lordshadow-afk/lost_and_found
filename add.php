@@ -1,5 +1,5 @@
 <?php
-$conn = mysqli_connect('localhost', 'root', '', 'lost_found_db');
+$conn = mysqli_connect('localhost', 'root', '', 'lost_found_db',3307);
 
 if (isset($_POST['submit'])) {
     $name = mysqli_real_escape_string($conn, $_POST['name']);
