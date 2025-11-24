@@ -1,6 +1,6 @@
 <?php
 // Database Connection
-$conn = mysqli_connect('localhost', 'root', '', 'lost_found_db');
+$conn = mysqli_connect('localhost', 'root', '', 'lost_found_db',3307);
 if (!$conn) { die("Connection failed: " . mysqli_connect_error()); }
 
 // Filter Logic
