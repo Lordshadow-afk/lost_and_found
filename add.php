@@ -1,7 +1,17 @@
 <?php
-$conn = mysqli_connect('localhost', 'root', '', 'lost_found_db',3307);
+session_start(); // 1. Start Session to access user ID
+include 'db_connect.php'; // 2. Use your central connection file
+
+// 3. Security: Kick user out if not logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
 
 if (isset($_POST['submit'])) {
+    // Get the User ID from the session
+    $user_id = $_SESSION['user_id'];
+    
     $name = mysqli_real_escape_string($conn, $_POST['name']);
     $category = mysqli_real_escape_string($conn, $_POST['category']);
     $location = mysqli_real_escape_string($conn, $_POST['location']);
@@ -9,17 +19,23 @@ if (isset($_POST['submit'])) {
     
     // Image Upload Logic
     $target_dir = "uploads/";
-    // Ensure unique filename to prevent overwriting
+    
+    // Create folder if it doesn't exist (Fixes the previous error)
+    if (!file_exists($target_dir)) {
+        mkdir($target_dir, 0777, true);
+    }
+
     $filename = time() . "_" . basename($_FILES["image"]["name"]);
     $target_file = $target_dir . $filename;
     
-    // Check if image file is a actual image or fake image
     $check = getimagesize($_FILES["image"]["tmp_name"]);
     
     if($check !== false) {
         if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-            $sql = "INSERT INTO lost_items (name, category, location, description, image) 
-                    VALUES ('$name', '$category', '$location', '$desc', '$target_file')";
+            
+            // 4. Update SQL: Added 'user_id' column and '$user_id' value
+            $sql = "INSERT INTO lost_items (name, category, location, description, image, user_id) 
+                    VALUES ('$name', '$category', '$location', '$desc', '$target_file', '$user_id')";
             
             if(mysqli_query($conn, $sql)){
                 header("Location: index.php");
