@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conn = mysqli_connect('localhost', 'root', '', 'lost_found_db');
+include 'db_connect.php';
 
 if (isset($_POST['signup'])) {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
